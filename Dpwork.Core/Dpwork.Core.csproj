@@ -2,12 +2,13 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-    <Version>0.0.1</Version>
+    <Version>0.0.2</Version>
     <Authors>ChuanGoing</Authors>
     <Company>ChuanGoing</Company>
     <PackageProjectUrl>https://github.com/ChuanGoing/Dpwork.Core.git</PackageProjectUrl>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReleaseNotes>json序列化/反序列化允许设置默认值</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
