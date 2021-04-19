@@ -2,12 +2,12 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-    <Version>0.0.3</Version>
+    <Version>0.0.4</Version>
     <Authors>ChuanGoing</Authors>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <PackageProjectUrl>https://github.com/ChuanGoing/Dpwork.Core.git</PackageProjectUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageReleaseNotes>实现MemoryCache缓存特性(用户接口/方法特性标识从而实现方法级内存缓存)</PackageReleaseNotes>
+    <PackageReleaseNotes>MemoryCache优化(支持设置缓存key和指定参数生成key)</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
