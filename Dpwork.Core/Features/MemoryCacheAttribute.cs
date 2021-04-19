@@ -4,6 +4,8 @@ using Dpwork.Core.Utils;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Dpwork.Core.Features
@@ -12,10 +14,22 @@ namespace Dpwork.Core.Features
     {
         private readonly bool _sliding;
         private readonly uint _timeMinutes;
-        public MemoryCacheAttribute(bool sliding = false, uint minutes = 0)
+        private readonly string _key;
+        private readonly int[] _paramsIndex;
+
+        /// <summary>
+        /// 实现aop memory cache
+        /// </summary>
+        /// <param name="key">指定缓存key,若没有指定缓存key时,根据paramsIndex指定得参数下标生成key,默认使用所有参数</param>
+        /// <param name="sliding">是否滑动过期时间</param>
+        /// <param name="minutes">过期时间(分钟)</param>
+        /// <param name="paramsIndex">参数索引下标,使用指定参数集合作为CacheKey</param>
+        public MemoryCacheAttribute(string key = "", bool sliding = false, uint minutes = 0, params int[] paramsIndex)
         {
             _sliding = sliding;
             _timeMinutes = minutes;
+            _paramsIndex = paramsIndex;
+            _key = key;
         }
 
 
@@ -36,11 +50,9 @@ namespace Dpwork.Core.Features
             //if (isAsync)
             //{
             //    returnType = returnType.GenericTypeArguments.FirstOrDefault();
-            //}
+            //}            
 
-            string param = StringUtil.ObjectToString(context.Parameters);//await SerializeUtil.SerializeAsync(context.Parameters);
-
-            string key = $"{context.ImplementationMethod.DeclaringType.FullName}.{context.ImplementationMethod.Name}.{param}";
+            string key = GetCacheKey(context);
 
             var cache = context.ServiceProvider.GetRequiredService<IMemoryCache>();
 
@@ -75,6 +87,33 @@ namespace Dpwork.Core.Features
             }
             entry.Value = returnValue;
 
+        }
+
+        private string GetCacheKey(AspectContext context)
+        {
+            if (!string.IsNullOrEmpty(_key)) return _key;
+
+            string param = string.Empty;
+            string key = $"{context.ImplementationMethod.DeclaringType.FullName}.{context.ImplementationMethod.Name}.{param}";
+
+            StringBuilder sb = new StringBuilder();
+
+            sb.Append($"{context.ImplementationMethod.DeclaringType.FullName}.{context.ImplementationMethod.Name}.");
+
+            if (_paramsIndex == null) sb.Append(StringUtil.ObjectToString("_", context.Parameters));
+            else
+            {
+                for (int i = 0; i < context.Parameters.Length; i++)
+                {
+                    if (_paramsIndex.Any(a => a == i))
+                    {
+                        sb.Append(SerializeUtil.Serialize(context.Parameters[i]));
+                        sb.Append('_');
+                    }
+                }
+            }
+            sb.Remove(sb.Length - 1, 1);
+            return sb.ToString();
         }
     }
 }

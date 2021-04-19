@@ -90,13 +90,13 @@ namespace Dpwork.Core.Utils
             return builder.ToString();
         }
 
-        public static string ObjectToString(params object[] input)
+        public static string ObjectToString(string separator = "_", params object[] input)
         {
             var result = string.Empty;
             foreach (var item in input)
             {
                 if (item == null) continue;
-                result += SerializeUtil.Serialize(item) + "_";
+                result += SerializeUtil.Serialize(item) + separator;
             }
 
             result = result.TrimEnd('_');
