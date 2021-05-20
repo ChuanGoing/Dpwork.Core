@@ -30,6 +30,7 @@ namespace Dpwork.Core.Features
         {
             _sliding = sliding;
             _timeMinutes = minutes;
+            _skipNull = skipNull;
             _paramsIndex = paramsIndex;
             _key = key;
         }
@@ -60,8 +61,11 @@ namespace Dpwork.Core.Features
 
             if (cache.TryGetValue(key, out object value))
             {
-                context.ReturnValue = value;
-                return;
+                if (!_skipNull || value != null)
+                {
+                    context.ReturnValue = value;
+                    return;
+                }
             }
 
             await next(context);

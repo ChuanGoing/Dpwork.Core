@@ -2,14 +2,13 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-    <Version>0.0.5</Version>
+    <Version>0.0.6</Version>
     <Authors>ChuanGoing</Authors>
     <Company>ChuanGoing</Company>
     <PackageProjectUrl>https://github.com/ChuanGoing/Dpwork.Core.git</PackageProjectUrl>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageReleaseNotes>MemoryCache增加是否缓存空值配置
-SerializeUtil序列化优化</PackageReleaseNotes>
+    <PackageReleaseNotes>不缓存空值(缓存为空时跳过缓存业务)</PackageReleaseNotes>
     <AssemblyVersion>0.0.5.0</AssemblyVersion>
     <FileVersion>0.0.5.0</FileVersion>
     <Description></Description>
