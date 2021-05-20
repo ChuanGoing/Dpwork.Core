@@ -2,12 +2,13 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-    <Version>0.0.4</Version>
+    <Version>0.0.5</Version>
     <Authors>ChuanGoing</Authors>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <PackageProjectUrl>https://github.com/ChuanGoing/Dpwork.Core.git</PackageProjectUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageReleaseNotes>MemoryCache优化(支持设置缓存key和指定参数生成key)</PackageReleaseNotes>
+    <PackageReleaseNotes>MemoryCache增加是否缓存空值配置
+SerializeUtil序列化优化</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>

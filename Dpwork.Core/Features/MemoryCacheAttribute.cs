@@ -14,6 +14,7 @@ namespace Dpwork.Core.Features
     {
         private readonly bool _sliding;
         private readonly uint _timeMinutes;
+        private readonly bool _skipNull;
         private readonly string _key;
         private readonly int[] _paramsIndex;
 
@@ -23,8 +24,9 @@ namespace Dpwork.Core.Features
         /// <param name="key">指定缓存key,若没有指定缓存key时,根据paramsIndex指定得参数下标生成key,默认使用所有参数</param>
         /// <param name="sliding">是否滑动过期时间</param>
         /// <param name="minutes">过期时间(分钟)</param>
+        /// <param name="skipNull">不缓存空值</param>
         /// <param name="paramsIndex">参数索引下标,使用指定参数集合作为CacheKey</param>
-        public MemoryCacheAttribute(string key = "", bool sliding = false, uint minutes = 0, params int[] paramsIndex)
+        public MemoryCacheAttribute(string key = "", bool sliding = false, uint minutes = 0, bool skipNull = true, params int[] paramsIndex)
         {
             _sliding = sliding;
             _timeMinutes = minutes;
@@ -73,7 +75,10 @@ namespace Dpwork.Core.Features
             {
                 returnValue = context.ReturnValue;
             }
-
+            if (_skipNull && returnValue == null)
+            {
+                return;
+            }
             var sp = _timeMinutes == 0 ? TimeSpan.FromMinutes(10) : TimeSpan.FromMinutes(_timeMinutes);
 
             using var entry = cache.CreateEntry(key);
