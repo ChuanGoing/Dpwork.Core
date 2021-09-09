@@ -5,7 +5,6 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Dpwork.Core.Features
@@ -101,28 +100,25 @@ namespace Dpwork.Core.Features
         private string GetCacheKey(AspectContext context)
         {
             if (!string.IsNullOrEmpty(_key)) return _key;
+            //StringBuilder sb = new StringBuilder();
+            var param = string.Empty;
 
-            string param = string.Empty;
-            string key = $"{context.ImplementationMethod.DeclaringType.FullName}.{context.ImplementationMethod.Name}.{param}";
-
-            StringBuilder sb = new StringBuilder();
-
-            sb.Append($"{context.ImplementationMethod.DeclaringType.FullName}.{context.ImplementationMethod.Name}.");
-
-            if (_paramsIndex == null) sb.Append(StringUtil.ObjectToString("_", context.Parameters));
+            if (_paramsIndex == null || _paramsIndex.Count() == 0) param = StringUtil.ObjectToString("_", context.Parameters);
             else
             {
                 for (int i = 0; i < context.Parameters.Length; i++)
                 {
                     if (_paramsIndex.Any(a => a == i))
                     {
-                        sb.Append(SerializeUtil.Serialize(context.Parameters[i]));
-                        sb.Append('_');
+
+                        param += SerializeUtil.Serialize(context.Parameters[i]);
+                        param += "_";
                     }
                 }
+                param = param.TrimEnd('_');
             }
-            sb.Remove(sb.Length - 1, 1);
-            return sb.ToString();
+
+            return $"{context.ImplementationMethod.DeclaringType.FullName}.{context.ImplementationMethod.Name}.{AESHelper.AesEncrypt(param)}";
         }
     }
 }
