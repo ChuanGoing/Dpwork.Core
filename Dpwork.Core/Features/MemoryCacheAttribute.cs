@@ -37,8 +37,6 @@ namespace Dpwork.Core.Features
 
         public override async Task Invoke(AspectContext context, AspectDelegate next)
         {
-            //var retType = context.ReturnValue.GetType();
-
             var retType = context.GetReturnParameter().Type;
             if (retType == typeof(void) || retType == typeof(Task) || retType == typeof(ValueTask))
             {
@@ -47,12 +45,12 @@ namespace Dpwork.Core.Features
             }
             var isAsync = context.IsAsync();
 
-            //var returnType = retType;
+            var returnType = retType;
 
-            //if (isAsync)
-            //{
-            //    returnType = returnType.GenericTypeArguments.FirstOrDefault();
-            //}            
+            if (isAsync)
+            {
+                returnType = returnType.GenericTypeArguments.FirstOrDefault();
+            }
 
             string key = GetCacheKey(context);
 
@@ -62,7 +60,24 @@ namespace Dpwork.Core.Features
             {
                 if (!_skipNull || value != null)
                 {
-                    context.ReturnValue = value;
+                    if (isAsync)
+                    {
+                        //TODO:优化
+                        if (retType == typeof(Task<>).MakeGenericType(returnType))
+                        {
+                            //Task.FromResult(value)
+                            context.ReturnValue = typeof(Task).GetMethod(nameof(Task.FromResult)).MakeGenericMethod(returnType).Invoke(null, new[] { value });
+                        }
+                        else if (retType == typeof(ValueTask<>).MakeGenericType(returnType))
+                        {
+                            //new ValueTask(value)
+                            context.ReturnValue = Activator.CreateInstance(typeof(ValueTask<>).MakeGenericType(returnType), value);
+                        }
+                    }
+                    else
+                    {
+                        context.ReturnValue = value;
+                    }                    
                     return;
                 }
             }
